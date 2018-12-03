@@ -7,7 +7,7 @@
 
 using namespace std;
 
-struct link {
+struct Link {
     int cost;
     int p_active;
     bool active;
@@ -15,7 +15,7 @@ struct link {
 
 class Network {
 public:
-    Network(const vector<vector<link>>& adj);
+    Network(const vector<vector<Link>>& adj);
     void refresh();
     void route();
     void print() const;
@@ -23,7 +23,7 @@ public:
     friend std::ostream& operator<<(std::ostream &os, const Network &network);
 
 private:
-    vector<vector<link>> adj;
+    vector<vector<Link>> adj;
     vector<bool> activeNodes;
 };
 

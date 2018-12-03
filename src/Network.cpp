@@ -2,7 +2,7 @@
 
 /// @name Network
 /// @brief Constructor for the Network class.
-Network::Network(const vector<vector<link>>& adj) : adj(adj) {}
+Network::Network(const vector<vector<Link>>& adj) : adj(adj) {}
 
 /// @name refresh
 /// @brief Determines which nodes and edges go down and changes the adjacency matrix to the new state.
