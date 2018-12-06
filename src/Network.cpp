@@ -10,12 +10,15 @@ Network::Network(const vector<vector<pair<int, bool>>>& adjMatrix) : adjMatrix(a
 /// @name refresh
 /// @brief Determines which nodes and edges go down and changes the adjacency matrix to the new state.
 void Network::refresh() {
-    srand(0);
+    srand(time(NULL));
     for (int i = 0; i < adjMatrix.size(); i++) {
         for (int j = 0; j < adjMatrix.size(); j++) {
-            if (rand() % 10 == 0) {
-                update(i, j, MAX_COST);
-                update(i, j, false);
+            if (i != j) {
+                int gen = rand() % 100;
+                if (gen < probMatrix[i][j]) {
+                    update(i, j, MAX_COST);
+                    update(i, j, false);
+                }
             }
         }
     }
@@ -46,16 +49,17 @@ void Network::route() {
         }
 
         distVec[i] = 0;
-        for (int i = 0; i < adjMatrix.size(); i++) {
+        for (int j = 0; j < adjMatrix.size(); j++) {
             int minIndex = getMinIndex(sptSet, distVec);
             sptSet.insert(minIndex);
             auto const& destNode = adjMatrix[minIndex];
-            for (int j = 0; j < destNode.size(); j++) {
-                int distToDest = destNode[j].first;
-                if (distToDest != MAX_COST) {
-                    int alt = distVec[minIndex] + destNode[j].first;
-                    if (alt < distVec[j]) {
-                        distVec[j] = alt;
+            for (int k = 0; k < destNode.size(); k++) {
+
+                int distToDest = destNode[k].first;
+                if (distToDest != MAX_COST && distVec[minIndex] != MAX_COST) {
+                    int alt = distVec[minIndex] + destNode[k].first;
+                    if (alt < distVec[k]) {
+                        distVec[k] = alt;
                     }
                 }
             }
@@ -67,7 +71,19 @@ void Network::route() {
             sp.emplace_back(make_pair(x, canReach));
         }
         spMatrix.emplace_back(sp);
+
+        sptSet.clear();
         distVec.clear();
+    }
+}
+
+void Network::input(vector<vector<int>> probs) {
+    for (auto const& x : probs) {
+        vector<int> prob;
+        for (auto y : x) {
+            prob.emplace_back(y);
+        }
+        probMatrix.emplace_back(prob);
     }
 }
 
@@ -137,6 +153,18 @@ void Network::printSPMatrix() const {
             } else {
                 cout << "INF" << " ";
             }
+        }
+        cout << endl;
+    }
+}
+
+void Network::printProbMatrix() const {
+    cout << "Probability Matrix" << endl;
+    for (int i = 0; i < probMatrix.size(); i++) {
+        cout << i << ": ";
+        for (int j = 0; j < probMatrix.size(); j++) {
+            int dist = probMatrix[i][j];
+            cout << dist << " ";
         }
         cout << endl;
     }

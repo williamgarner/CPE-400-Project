@@ -12,15 +12,22 @@ int main() {
         {{3, true},  {MC, false}, {MC, false}, {1, true},   {0, false}}
     }; // first int is cost, second int is probability (in percentage) of the link staying up in the next refresh
 
-    vector<vector<pair<int, bool>>> adj2 = { // adjacency matrix
-        {{0, false}, {2, true},   {2, true},   {4, true}},
-        {{2, true},  {0, false},  {MC, false}, {MC, false}},
-        {{2, true},  {MC, false}, {0, false},  {1, true}},
-        {{4, true},  {MC, false}, {1, true},   {0, false}},
-    };
+    vector<vector<int>> probMatrix;
+    for (int i = 0; i < adj.size(); i++) {
+        vector<int> probs;
+        for (int j = 0; j < adj.size(); j++) {
+            cout << "Enter percentage of failure for route from node " << i << " to node " << j << ": ";
+            int prob;
+            cin >> prob;
+            probs.emplace_back(prob);
+        }
+        probMatrix.emplace_back(probs);
+    }
     
     Network network(adj);
 
+    network.input(probMatrix);
+    network.printProbMatrix();
     network.route();
     network.printAdjMatrix();
     cout << endl;
@@ -34,8 +41,5 @@ int main() {
     cout << endl;
     network.printSPMatrix();
     cout << endl;
-
-
-    //cout << network;
     return 0;
 }
