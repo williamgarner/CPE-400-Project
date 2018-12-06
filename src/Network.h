@@ -3,32 +3,33 @@
 
 #include <iostream>
 #include <vector>
+#include <set>
 #include <utility>
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 
 
 
 using namespace std;
 
-
-struct Link {
-    int cost;
-    int p_active;
-    bool active;
-};
-
 class Network {
 public:
-    Network(const vector<vector<Link>>& adj);
+    Network(const vector<vector<pair<int, bool>>>& adj);
     void refresh();
     void route();
-    void print() const;
+    void printAdjMatrix() const;
+    void printSPMatrix() const;
 
     friend std::ostream& operator<<(std::ostream &os, const Network &network);
 
 private:
-    vector<vector<Link>> adj;
+    void update(int x, int y, int cost);
+    void update(int x, int y, bool active);
+    int getMinIndex(const set<int>& sptSet, const vector<int>& distVec) const;
+
+    vector<vector<pair<int, bool>>> adjMatrix;
+    vector<vector<pair<int, bool>>> spMatrix;
     vector<bool> activeNodes;
+    const int MAX_COST = INT_MAX;
 };
 
 #endif //NETWORK_H

@@ -2,7 +2,7 @@
 
 /// @name Network
 /// @brief Constructor for the Network class.
-Network::Network(const vector<vector<Link>>& adj) : adj(adj) {}
+Network::Network(const vector<vector<pair<int, bool>>>& adjMatrix) : adjMatrix(adjMatrix) {}
 
 /// @name refresh
 /// @brief Determines which nodes and edges go down and changes the adjacency matrix to the new state.
@@ -23,21 +23,88 @@ void Network::refresh() {
 /// @details The expected value of a route is calculated as EX = cost * p(cost) + 10 * (100 - p(cost)).
 /// @details The algorithm takes into account the cost of a link and the likelihood of the link succeeding.
 void Network::route() {
+    for (int i = 0; i < adjMatrix.size(); i++) {
+        set<int> sptSet;
+        vector<int> distVec;
 
+        for (auto const& x : adjMatrix) {
+            distVec.emplace_back(MAX_COST);
+        }
+
+        distVec[i] = 0;
+        while (sptSet.size() < adjMatrix.size()) {
+            int minIndex = getMinIndex(sptSet, distVec);
+            sptSet.insert(minIndex);
+            auto const& destNode = adjMatrix[minIndex];
+            for (int j = 0; j < destNode.size(); j++) {
+                int distToDest = destNode[j].first;
+                if (distToDest != MAX_COST) {
+                    int alt = distVec[minIndex] + destNode[j].first;
+                    if (alt < distVec[j]) {
+                        distVec[j] = alt;
+                    }
+                }
+            }
+        }
+
+        vector<pair<int, bool>> sp;
+        for (auto x : distVec) {
+            bool canReach = x != MAX_COST;
+            sp.emplace_back(make_pair(x, canReach));
+        }
+        spMatrix.emplace_back(sp);
+        distVec.clear();
+    }
+}
+
+int Network::getMinIndex(const set<int>& sptSet, const vector<int>& distVec) const {
+    int minIndex = 0, minDist = MAX_COST;
+    for (int i = 0; i < distVec.size(); i++) {
+        if (sptSet.find(i) == sptSet.end() && distVec[i] < minDist) {
+            minIndex = i;
+            minDist = distVec[i];
+        }
+    }
+    return minIndex;
+}
+
+void Network::update(int x, int y, int cost) {
+    adjMatrix[x][y].first = cost;
+    adjMatrix[y][x].first = cost;
+}
+
+void Network::update(int x, int y, bool active) {
+    adjMatrix[x][y].second = active;
+    adjMatrix[y][x].second = active;
 }
 
 /// @name print
 /// @brief Prints out the adjacency matrix representing the network state, should only be used for debugging.
-void Network::print() const {
+void Network::printAdjMatrix() const {
     int src = 0;
-    for (auto const& x : adj) {
+    for (auto const& x : adjMatrix) {
         int dest = 0;
         for (auto const& y : x) {
-            cout << src << " --> " << dest++ << endl;
-            string cost = "C: " + to_string(y.cost);
-            string p_active = "P: " + to_string(y.p_active);
-            string active = "A: " + string(y.active ? "true" : "false");
-            string out = cost.append(" | ").append(p_active).append(" | ").append(active);
+            cout << src << " -> " << dest++ << endl;
+            string cost = "C: " + to_string(y.first);
+            string active = "A: " + string(y.second ? "true" : "false");
+            string out = cost.append(" | ").append(active);
+            cout << out << endl;
+        }
+        src++;
+        cout << endl;
+    }
+}
+
+void Network::printSPMatrix() const {
+    int src = 0;
+    for (auto const& x : spMatrix) {
+        int dest = 0;
+        for (auto const& y : x) {
+            cout << src << " -> " << dest++ << endl;
+            string cost = "C: " + to_string(y.first);
+            string active = "A: " + string(y.second ? "true" : "false");
+            string out = cost.append(" | ").append(active);
             cout << out << endl;
         }
         src++;
@@ -51,14 +118,14 @@ std::ostream& operator<<(std::ostream& os, const Network& network) {
     vector<pair<int, int>> connection;
     os << "graph G{" << endl;
     int src = 0;
-    for (auto const& x : network.adj) {
+    for (auto const& x : network.adjMatrix) {
         int dest = 0;
         for (auto const& y : x) {
-            if(y.active)
+            if(y.second)
             {
                 if(find(connection.begin(), connection.end(), make_pair(src, dest)) == connection.end())
                 {
-                    os << src << " -- " << dest << "[label= \"cost: " << y.cost << "\"];" << endl;
+                    os << src << " -- " << dest << "[label= \"cost: " << y.first << "\"];" << endl;
                     connection.emplace_back(dest, src);
                 }
             }
