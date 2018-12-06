@@ -6,8 +6,7 @@
 #include <set>
 #include <utility>
 #include <bits/stdc++.h>
-
-
+#include <string.h>
 
 using namespace std;
 
@@ -30,6 +29,7 @@ private:
     vector<vector<pair<int, bool>>> spMatrix;
     vector<bool> activeNodes;
     const int MAX_COST = INT_MAX;
+    static unsigned int pngNum;
 };
 
 #endif //NETWORK_H

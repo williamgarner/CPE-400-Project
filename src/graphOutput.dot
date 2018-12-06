@@ -1,0 +1,6 @@
+graph G{
+0 -- 1[label= "cost: 2"];
+0 -- 2[label= "cost: 3"];
+0 -- 3[label= "cost: 1"];
+2 -- 3[label= "cost: 4"];
+}

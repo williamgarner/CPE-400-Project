@@ -1,5 +1,7 @@
 #include "Network.h"
 
+unsigned int Network::pngNum = 0;
+
 /// @name Network
 /// @brief Constructor for the Network class.
 Network::Network(const vector<vector<pair<int, bool>>>& adjMatrix) : adjMatrix(adjMatrix) {}
@@ -15,7 +17,8 @@ void Network::refresh() {
     else
         cout << "Could not open file" << endl;
     graphOutputFile.close();
-    system("dot -Tpng ../src/graphOutput.dot -o ../src/graph.png");
+    string sysCall = {"dot -Tpng ../src/graphOutput.dot -o ../src/graph" + to_string(pngNum++) + ".png"};
+    system(sysCall.c_str());
 }
 
 /// @name route
@@ -116,6 +119,9 @@ void Network::printSPMatrix() const {
 /// @brief Outputs GraphViz notation for use in visualizing the network.
 std::ostream& operator<<(std::ostream& os, const Network& network) {
     vector<pair<int, int>> connection;
+    vector<string> cities = {"Reno", "Seoul", "São Paulo","Houston", "Bombay", "JAKARTA", "Karachi", "Washington D.C.",
+                             "Moscow", "Shanghai", "Mexico City", "London", "Rio de Janeiro", "Chicago", "Los Angeles" ,
+                             "Sydney", "St Petersburg", "Baghdad", "Madrid" };
     os << "graph G{" << endl;
     int src = 0;
     for (auto const& x : network.adjMatrix) {
@@ -125,7 +131,9 @@ std::ostream& operator<<(std::ostream& os, const Network& network) {
             {
                 if(find(connection.begin(), connection.end(), make_pair(src, dest)) == connection.end())
                 {
-                    os << src << " -- " << dest << "[label= \"cost: " << y.first << "\"];" << endl;
+                    os << src << "[label = \"" << cities[src] << "\"]" << endl;
+                	os << dest << "[label = \"" << cities[dest] << "\"]" << endl;
+                    os << src << " -- " << dest << "[label= \" " << y.cost << "\"];" << endl;
                     connection.emplace_back(dest, src);
                 }
             }
@@ -133,7 +141,7 @@ std::ostream& operator<<(std::ostream& os, const Network& network) {
         }
         src++;
     }
+    os << "labelloc=\"t\"" << endl;
+    os << "label=\"The End of the World\"" << endl;
     os << '}';
-
-
 }
