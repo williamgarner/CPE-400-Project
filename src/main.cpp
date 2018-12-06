@@ -21,8 +21,8 @@ int main() {
     
     Network network(adj);
     network.route();
-//    network.refresh();
-//    network.route();
+    network.refresh();
+    network.route();
     network.printSPMatrix();
 
     //cout << network;

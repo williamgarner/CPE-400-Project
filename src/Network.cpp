@@ -133,7 +133,7 @@ std::ostream& operator<<(std::ostream& os, const Network& network) {
                 {
                     os << src << "[label = \"" << cities[src] << "\"]" << endl;
                 	os << dest << "[label = \"" << cities[dest] << "\"]" << endl;
-                    os << src << " -- " << dest << "[label= \" " << y.cost << "\"];" << endl;
+                    os << src << " -- " << dest << "[label= \" " << y.first << "\"];" << endl;
                     connection.emplace_back(dest, src);
                 }
             }

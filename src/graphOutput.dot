@@ -1,6 +1,25 @@
 graph G{
-0 -- 1[label= "cost: 2"];
-0 -- 2[label= "cost: 3"];
-0 -- 3[label= "cost: 1"];
-2 -- 3[label= "cost: 4"];
+0[label = "Reno"]
+1[label = "Seoul"]
+0 -- 1[label= " 2"];
+0[label = "Reno"]
+2[label = "São Paulo"]
+0 -- 2[label= " 4"];
+0[label = "Reno"]
+3[label = "Houston"]
+0 -- 3[label= " 5"];
+0[label = "Reno"]
+4[label = "Bombay"]
+0 -- 4[label= " 3"];
+1[label = "Seoul"]
+2[label = "São Paulo"]
+1 -- 2[label= " 3"];
+2[label = "São Paulo"]
+3[label = "Houston"]
+2 -- 3[label= " 1"];
+3[label = "Houston"]
+4[label = "Bombay"]
+3 -- 4[label= " 1"];
+labelloc="t"
+label="The End of the World"
 }
