@@ -1,4 +1,5 @@
 #include "Network.h"
+#include <stdlib.h>
 
 unsigned int Network::pngNum = 0;
 
@@ -9,6 +10,15 @@ Network::Network(const vector<vector<pair<int, bool>>>& adjMatrix) : adjMatrix(a
 /// @name refresh
 /// @brief Determines which nodes and edges go down and changes the adjacency matrix to the new state.
 void Network::refresh() {
+    srand(0);
+    for (int i = 0; i < adjMatrix.size(); i++) {
+        for (int j = 0; j < adjMatrix.size(); j++) {
+            if (rand() % 10 == 0) {
+                update(i, j, MAX_COST);
+                update(i, j, false);
+            }
+        }
+    }
 
     ofstream graphOutputFile;
     graphOutputFile.open("../src/graphOutput.dot");
@@ -26,6 +36,7 @@ void Network::refresh() {
 /// @details The expected value of a route is calculated as EX = cost * p(cost) + 10 * (100 - p(cost)).
 /// @details The algorithm takes into account the cost of a link and the likelihood of the link succeeding.
 void Network::route() {
+    spMatrix.clear();
     for (int i = 0; i < adjMatrix.size(); i++) {
         set<int> sptSet;
         vector<int> distVec;
@@ -35,7 +46,7 @@ void Network::route() {
         }
 
         distVec[i] = 0;
-        while (sptSet.size() < adjMatrix.size()) {
+        for (int i = 0; i < adjMatrix.size(); i++) {
             int minIndex = getMinIndex(sptSet, distVec);
             sptSet.insert(minIndex);
             auto const& destNode = adjMatrix[minIndex];
@@ -81,36 +92,52 @@ void Network::update(int x, int y, bool active) {
     adjMatrix[y][x].second = active;
 }
 
-/// @name print
+/// @name printAdjMatrix
 /// @brief Prints out the adjacency matrix representing the network state, should only be used for debugging.
 void Network::printAdjMatrix() const {
-    int src = 0;
-    for (auto const& x : adjMatrix) {
-        int dest = 0;
-        for (auto const& y : x) {
-            cout << src << " -> " << dest++ << endl;
-            string cost = "C: " + to_string(y.first);
-            string active = "A: " + string(y.second ? "true" : "false");
-            string out = cost.append(" | ").append(active);
-            cout << out << endl;
+//    int src = 0;
+//    for (auto const& x : adjMatrix) {
+//        int dest = 0;
+//        for (auto const& y : x) {
+//            cout << src << " -> " << dest++ << endl;
+//            string cost = "C: " + to_string(y.first);
+//            string active = "A: " + string(y.second ? "true" : "false");
+//            string out = cost.append(" | ").append(active);
+//            cout << out << endl;
+//        }
+//        src++;
+//        cout << endl;
+//    }
+    cout << "Adjacency Matrix" << endl;
+    for (int i = 0; i < adjMatrix.size(); i++) {
+        cout << i << ": ";
+        for (int j = 0; j < adjMatrix.size(); j++) {
+            int dist = adjMatrix[i][j].first;
+            if (dist != MAX_COST) {
+                cout << dist << " ";
+            } else {
+                cout << "INF" << " ";
+            }
         }
-        src++;
         cout << endl;
     }
 }
 
+/// @name printSPMatrix
+/// @brief Prints out the shortest path matrix representing the network state, should only be used for debugging.
+
 void Network::printSPMatrix() const {
-    int src = 0;
-    for (auto const& x : spMatrix) {
-        int dest = 0;
-        for (auto const& y : x) {
-            cout << src << " -> " << dest++ << endl;
-            string cost = "C: " + to_string(y.first);
-            string active = "A: " + string(y.second ? "true" : "false");
-            string out = cost.append(" | ").append(active);
-            cout << out << endl;
+    cout << "Shortest Path Matrix" << endl;
+    for (int i = 0; i < spMatrix.size(); i++) {
+        cout << i << ": ";
+        for (int j = 0; j < spMatrix.size(); j++) {
+            int dist = spMatrix[i][j].first;
+            if (dist != MAX_COST) {
+                cout << dist << " ";
+            } else {
+                cout << "INF" << " ";
+            }
         }
-        src++;
         cout << endl;
     }
 }

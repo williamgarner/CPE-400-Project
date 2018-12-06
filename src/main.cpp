@@ -20,10 +20,21 @@ int main() {
     };
     
     Network network(adj);
+
     network.route();
-    network.refresh();
-    network.route();
+    network.printAdjMatrix();
+    cout << endl;
     network.printSPMatrix();
+    cout << endl;
+
+    network.refresh();
+
+    network.route();
+    network.printAdjMatrix();
+    cout << endl;
+    network.printSPMatrix();
+    cout << endl;
+
 
     //cout << network;
     return 0;
