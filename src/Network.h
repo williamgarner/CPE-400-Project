@@ -5,6 +5,7 @@
 #include <vector>
 #include <utility>
 #include<bits/stdc++.h>
+#include <string.h>
 
 
 
@@ -29,6 +30,7 @@ public:
 private:
     vector<vector<Link>> adj;
     vector<bool> activeNodes;
+    static unsigned int pngNum;
 };
 
 #endif //NETWORK_H

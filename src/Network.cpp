@@ -1,5 +1,7 @@
 #include "Network.h"
 
+unsigned int Network::pngNum = 0;
+
 /// @name Network
 /// @brief Constructor for the Network class.
 Network::Network(const vector<vector<Link>>& adj) : adj(adj) {}
@@ -15,7 +17,8 @@ void Network::refresh() {
     else
         cout << "Could not open file" << endl;
     graphOutputFile.close();
-    system("dot -Tpng ../src/graphOutput.dot -o ../src/graph.png");
+    string sysCall = {"dot -Tpng ../src/graphOutput.dot -o ../src/graph" + to_string(pngNum++) + ".png"};
+    system(sysCall.c_str());
 }
 
 /// @name route
