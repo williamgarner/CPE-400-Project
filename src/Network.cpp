@@ -49,8 +49,10 @@ void Network::print() const {
 /// @brief Outputs GraphViz notation for use in visualizing the network.
 std::ostream& operator<<(std::ostream& os, const Network& network) {
     vector<pair<int, int>> connection;
+    vector<string> cities = {"Reno", "SEOUL", "São Paulo","Houston ", "Bombay", "JAKARTA", "Karachi", "Washington D.C." "Moscow", "Shanghai", "Mexico City", "London", "Rio de Janeiro", "Chicago", "Los Angeles" , "Sydney", "St Petersburg", "Baghdad", "Madrid" };
     os << "graph G{" << endl;
     int src = 0;
+    int city = 0;
     for (auto const& x : network.adj) {
         int dest = 0;
         for (auto const& y : x) {
@@ -58,7 +60,9 @@ std::ostream& operator<<(std::ostream& os, const Network& network) {
             {
                 if(find(connection.begin(), connection.end(), make_pair(src, dest)) == connection.end())
                 {
-                    os << src << " -- " << dest << "[label= \"cost: " << y.cost << "\"];" << endl;
+                	os << src << "[label = \"" << cities[src] << "\"]" << endl;
+                	os << dest << "[label = \"" << cities[dest] << "\"]" << endl;
+                    os << src << " -- " << dest << "[label= \" " << y.cost << "\"];" << endl;
                     connection.emplace_back(dest, src);
                 }
             }
@@ -66,6 +70,8 @@ std::ostream& operator<<(std::ostream& os, const Network& network) {
         }
         src++;
     }
+    os << "labelloc=\"t\"" << endl;
+    os << "label=\"The End of the World\"" << endl;
     os << '}';
 
 
